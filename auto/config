@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e
+
+MIR_PREFIX="http://192.168.1.100:3142/"
+
+MIR_REP="${MIR_PREFIX}http.debian.net/debian/"
+MIR_SEC="${MIR_PREFIX}security.debian.org/"
+DISTRO="wheezy"
+
+export http_proxy=${MIR_PREFIX}
+
+lb config noauto \
+  -a amd64 \
+  -b hdd \
+  --mode debian \
+  --bootloader syslinux \
+  --debian-installer false \
+  -d ${DISTRO} \
+  --memtest none \
+  --apt-http-proxy "${MIR_PREFIX}" \
+  --parent-mirror-bootstrap ${MIR_REP} \
+  --parent-mirror-chroot-security ${MIR_SEC} \
+  --parent-mirror-binary ${MIR_REP} \
+  --parent-mirror-binary-security ${MIR_SEC} \
+  --mirror-bootstrap ${MIR_REP} \
+  --mirror-chroot-security ${MIR_SEC} \
+  --mirror-binary ${MIR_REP} \
+  --mirror-binary-security ${MIR_SEC} \
+  --keyring-packages "debian-archive-keyring" \
+  --firmware-binary true \
+  --firmware-chroot true \
+  --source false \
+  --apt-indices false \
+  --cache-packages false \
+  --archive-areas 'main contrib non-free' \
+  --bootappend-live "boot=live live-config username=jason noeject quiet persistent console=tty0 hostname=live-test" \
+  "${@}"
+
